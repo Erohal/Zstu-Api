@@ -1,0 +1,8 @@
+{
+    "uri": "mongodb://localhost:27017/zstuapi",
+    "options": {
+        "maxPoolSize": 10,
+        "serverSelectionTimeoutMS": 5000,
+        "socketTimeoutMS": 45000
+    }
+}

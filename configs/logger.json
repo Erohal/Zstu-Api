@@ -1,0 +1,34 @@
+{
+    "appenders": {
+        "console": {
+            "type": "console"
+        },
+        "file": {
+            "type": "file",
+            "filename": "logs/zstu-api.log"
+        }
+    },
+    "categories": {
+        "default": {
+            "appenders": [
+                "console",
+                "file"
+            ],
+            "level": "debug"
+        },
+        "express": {
+            "appenders": [
+                "console",
+                "file"
+            ],
+            "level": "debug"
+        },
+        "database": {
+            "appenders": [
+                "console",
+                "file"
+            ],
+            "level": "debug"
+        }
+    }
+}
