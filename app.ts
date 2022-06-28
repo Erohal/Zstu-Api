@@ -2,6 +2,7 @@ import express from 'express'
 import * as expressConfig from './configs/express.json'
 import { logger } from './utils/logger'
 import SsoRouter from './routes/sso'
+import AsRouter from './routes/as'
 
 // Get two loggers, default logger to log the normal info and the express logger to replace the default logger of express
 const defaultLogger = logger.getLogger()
@@ -15,9 +16,12 @@ app.use(express.json())
 // Replace the default logger of express
 defaultLogger.info('Using log4js as logger of express')
 app.use(logger.connectLogger(expressLogger, {}))
-// Register the routers
+// Registe the sso routers
 defaultLogger.info('Registing the SsoRouter')
 app.use('/sso', SsoRouter)
+// Registe the academic system router
+defaultLogger.info('Registing the AsRouter')
+app.use('/as', AsRouter)
 // Start to serve on a specified port, default port is 80
 defaultLogger.info('Ready to serve')
 app.listen(expressConfig.port, () => {

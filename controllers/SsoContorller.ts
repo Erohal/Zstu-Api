@@ -3,6 +3,7 @@ import { v4 } from 'uuid'
 import SsoHelper from '../core/SsoHelper'
 import { zstuerSchema } from '../schemas/zstuer'
 import { mongoClient } from '../utils/database'
+
 /**
  * 1. code:
  * 0 ---> OK
@@ -33,19 +34,31 @@ export async function SsoLoginController(req: express.Request, res: express.Resp
         msg.code = 1
         msg.status = 'error'
         msg.msg = 'Please provide your username and password both'
-        res.end(JSON.stringify(msg))
+        res.json(msg)
+        return
     }
     // Create the model of Zstuer
     const zstuer = mongoClient.model('zstuer', zstuerSchema)
-    
-    // Try to login
+    // If the user had logined, we only need to return the uuid
+    const doc: any = await zstuer.findOne({ username: username }).then((doc: any) => {
+        return doc
+    })
+
+    if (doc) {
+        msg.data = { uuid: doc.uuid }
+        res.json(msg)
+        return
+    }
+
+    // Try to login and store the data
     const ssoHelper = new SsoHelper(username, password)
     const status = await ssoHelper.login()
     if(status == false) {
         msg.code = 1
         msg.status = 'wrong username or password'
         msg.msg = 'Please check your username and password'
-        res.end(JSON.stringify(msg))
+        res.json(msg)
+        return
     }
     // Logined successfully, store the cookie jar to mongodb and end with a uuidv4
     const uuid = v4()
@@ -64,9 +77,10 @@ export async function SsoLoginController(req: express.Request, res: express.Resp
             msg.code = 1
             msg.status = 'database error'
             msg.msg = 'Wait a hour and try again'
-            res.end(JSON.stringify(msg))
+            res.json(msg)
+            return
         }
         msg.data = { uuid: uuid.toString() }
-        res.end(JSON.stringify(msg))
+        res.json(msg)
     })
 }
