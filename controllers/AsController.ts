@@ -54,3 +54,32 @@ export async function AsGradesController(req: express.Request, res: express.Resp
     msg.data = await asHelper.getGrades()
     res.json(msg)
 }
+
+export async function AsTmController(req: express.Request, res: express.Response) {
+    const uuid = req.body.uuid
+    if (!uuid) {
+        msg.code = 1
+        msg.status = 'error',
+        msg.msg = 'Please provide uuid'
+        res.json(msg)
+        return
+    }
+
+    const zstuer = mongoClient.model('zstuer', zstuerSchema)
+    const record: any = await zstuer.findOne({ uuid: uuid }).then((docs: any) => {
+        return docs
+    })
+
+    if(!record) {
+        msg.code = 1
+        msg.status = 'error'
+        msg.msg = 'Your uuid is wrong'
+        res.json(msg)
+        return
+    }
+    // User had logined, restore the cookie from json
+    const cookieJar = CookieJar.fromJSON(record.cookie)
+    const asHelper = new AsHelper(cookieJar)
+    msg.data = await asHelper.getTM()
+    res.json(msg)
+}

@@ -10,6 +10,7 @@ export default class AsHelper {
         this.sesstion = createSession(cookieJar)
     }
 
+    // Return a json that contains all curse info
     public async getGrades() {
         const url = 'https://jwglxt.webvpn.zstu.edu.cn/jwglxt/cjcx/cjcx_cxXsgrcj.html?doType=query'
         const data = {
@@ -56,5 +57,17 @@ export default class AsHelper {
         processedRes.gpa = (totalCredits / totalFps).toFixed(2)
         console.log(processedRes.gpa)
         return processedRes
+    }
+
+    // "Turn to a major" info
+    public async getTM() {
+        const url = 'https://jwglxt.webvpn.zstu.edu.cn/jwglxt/xszzy/xszzysqgl_cxXszzysqIndex.html?doType=query&pkey=&gnmkdm=N106204'
+        const res: any = await this.sesstion({
+            url: url,
+            method: 'GET'
+        }).then((value) => {
+            return value.data
+        })
+        return res.items
     }
 }
