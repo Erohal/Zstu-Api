@@ -68,6 +68,26 @@ export default class AsHelper {
         }).then((value) => {
             return value.data
         })
-        return res.items
+
+        /**
+         * res.items[x].sqsj   ---> Upload time
+         * res.items[x].shsj   ---> Update time
+         * res.items[x].sqly   ---> Reason
+         * res.items[x].zrjgmc ---> To one academic
+         * res.items[x].zrzymc ---> The name of department
+         * res.items[x].shzt   ---> Application status
+         */
+        let processedRes: any = []
+        for (let item in res.items) {
+            let record: any = {}
+            record.upload_time = res.items[item].sqsj
+            record.update_time = res.items[item].shsj
+            record.reason = res.items[item].sqly
+            record.to_academic = res.items[item].zrjgmc
+            record.to_department = res.items[item].zrzymc
+            record.status = res.items[item].shzt
+            processedRes.push(record)
+        }
+        return processedRes
     }
 }

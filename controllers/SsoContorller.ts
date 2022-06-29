@@ -29,6 +29,7 @@ let msg = {
 export async function SsoLoginController(req: express.Request, res: express.Response) {
     const username = req.body.username
     const password = req.body.password
+    const force: boolean = req.body.force ?? false
     // Check if the username and password comes in
     if (!username || !password) {
         msg.code = 1
@@ -44,7 +45,7 @@ export async function SsoLoginController(req: express.Request, res: express.Resp
         return doc
     })
 
-    if (doc) {
+    if (doc && !force) {
         msg.data = { uuid: doc.uuid }
         res.json(msg)
         return
@@ -76,7 +77,7 @@ export async function SsoLoginController(req: express.Request, res: express.Resp
         if (error) {
             msg.code = 1
             msg.status = 'database error'
-            msg.msg = 'Wait a hour and try again'
+            msg.msg = 'Database error, wait a hour and try again'
             res.json(msg)
             return
         }

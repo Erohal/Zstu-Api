@@ -43,8 +43,8 @@ export default class SsoHelper {
         // Only if the status code equals 302 that we could say it successfully logined
         // Return a promise boolean value
         if (res.status == 302) {
-            await this.updateWebvpnCookie()
-            await this.jasigLogin()
+            this.updateWebvpnCookie()
+            this.jasigLogin()
             return true
         } else {
             return false
@@ -56,7 +56,7 @@ export default class SsoHelper {
         await this.session({
             url: updateUrl,
             method: 'GET',
-            validateStatus: () => true            
+            validateStatus: () => true
         })
     }
     // To request academic system, we need to request this first

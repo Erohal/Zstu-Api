@@ -26,6 +26,10 @@ import { mongoClient } from '../utils/database'
     data: {}
 }
 
+function checkSessionExpire(date: Date) {
+    return (new Date() > date) ? false : true
+}
+
 export async function AsGradesController(req: express.Request, res: express.Response) {
     const uuid = req.body.uuid
     if (!uuid) {
@@ -41,13 +45,22 @@ export async function AsGradesController(req: express.Request, res: express.Resp
         return docs
     })
 
-    if(!record) {
+    if (!record) {
         msg.code = 1
         msg.status = 'error'
         msg.msg = 'Your uuid is wrong'
         res.json(msg)
         return
     }
+
+    if (!checkSessionExpire(record.expire)) {
+        msg.code = 1
+        msg.status = 'error'
+        msg.msg = 'Session expire, please relogin'
+        res.json(msg)
+        return
+    }
+
     // User had logined, restore the cookie from json
     const cookieJar = CookieJar.fromJSON(record.cookie)
     const asHelper = new AsHelper(cookieJar)
@@ -70,13 +83,22 @@ export async function AsTmController(req: express.Request, res: express.Response
         return docs
     })
 
-    if(!record) {
+    if (!record) {
         msg.code = 1
         msg.status = 'error'
         msg.msg = 'Your uuid is wrong'
         res.json(msg)
         return
     }
+
+    if (!checkSessionExpire(record.expire)) {
+        msg.code = 1
+        msg.status = 'error'
+        msg.msg = 'Session expire, please relogin'
+        res.json(msg)
+        return
+    }
+
     // User had logined, restore the cookie from json
     const cookieJar = CookieJar.fromJSON(record.cookie)
     const asHelper = new AsHelper(cookieJar)
